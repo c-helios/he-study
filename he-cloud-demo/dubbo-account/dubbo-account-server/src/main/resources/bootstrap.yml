@@ -1,0 +1,87 @@
+server:
+  port: 8402
+
+management:
+  endpoints:
+    web:
+      #配置端点访问前缀
+      base-path: /actuator
+      exposure:
+        #暴露所有端点
+        include: '*'
+
+spring:
+  application:
+    name: dubbo-account-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848,localhost:8849,localhost:8850
+      config:
+        server-addr: localhost:8848,localhost:8849,localhost:8850
+        namespace: dev
+        group: DEV_GROUP
+        file-extension: yaml
+        extConfig:
+          - dataId: mysql-account.yaml
+            group: DEV_GROUP
+          - dataId: seataServer.properties
+            namespace:
+            group: SEATA_GROUP
+#    alibaba:
+#      seata:
+#        # seata 服务分组，要与服务端nacos-config.txt中service.vgroup_mapping的后缀对应
+#        tx-service-group: test_tx_group
+    sentinel:
+      transport:
+        # 配置sentinel dashboard地址
+        dashboard: localhost:8858
+        # 默认8719端口，假如被占用会自动从8719开始依次+1扫描，直至找到未被占用的端口
+        port: 8720
+      datasource:
+        flow:
+          nacos:
+            server-addr: localhost:8848
+            dataId: ${spring.application.name}-sentinel-flow-rules
+            groupId: SENTINEL_GROUP
+            data-type: json
+            rule-type: flow
+
+seata:
+  # seata 服务分组，要与服务端nacos-config.txt中service.vgroup_mapping的后缀对应
+  tx-service-group: test_tx_group
+  service:
+    vgroup-mapping:
+      test_tx_group: default
+  registry:
+    type: nacos
+    nacos:
+      server-addr: localhost:8848
+      group: SEATA_GROUP
+
+dubbo:
+  # 扫描包地址
+  scan:
+    base-packages: com.hcw.rpc.service
+  # 协议
+  protocol:
+    name: dubbo
+    port: -1
+  # 注册地址
+  registry:
+    check: false
+#    address: nacos://localhost:8848
+    # 说明挂载到 Spring Cloud 注册中心（也就是我们的nacos，可以直接使用nacos地址替换localhost）
+    address: spring-cloud://localhost:8848
+  service:
+    version: 1.0.0
+
+#csp:
+#  sentinel:
+#    dashboard:
+#      server: localhost:8858
+#    api:
+#      port: 8720
+#
+#project:
+#  name: dubbo-account-service

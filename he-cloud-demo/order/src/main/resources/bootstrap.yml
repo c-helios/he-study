@@ -1,0 +1,41 @@
+server:
+  port: 8002
+
+spring:
+  application:
+    name: order-service
+#  cloud:
+#    zookeeper:
+#      connect-string: 127.0.0.1:2181
+#      discovery:
+#        instance-host: localhost
+  zipkin:
+    base-url: http://localhost:9411
+  sleuth:
+    sampler:
+      probability: 1
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:3000/eureka
+ribbon:
+  # 指的是建立连接所用的超时时间
+  connect-timeout: 2000
+  # 指的是建立连接后从服务器获取资源的超时时间（即请求处理的超时时间）
+  read-timeout: 2000
+
+feign:
+  hystrix:
+    enabled: true
+#hystrix:
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 1000

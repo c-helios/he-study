@@ -1,0 +1,47 @@
+server:
+  port: 8301
+
+spring:
+  application:
+    name: seata-order-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848,localhost:8849,localhost:8850
+      config:
+        server-addr: localhost:8848,localhost:8849,localhost:8850
+        namespace: dev
+        group: DEV_GROUP
+        file-extension: yaml
+        extension-configs:
+          - dataId: mysql-order.yaml
+            group: DEV_GROUP
+          - dataId: seataServer.properties
+            group: SEATA_GROUP
+#    alibaba:
+#      seata:
+#        # seata 服务分组，要与服务端nacos-config.txt中service.vgroup_mapping的后缀对应
+#        tx-service-group: test_tx_group
+
+seata:
+  # seata 服务分组，要与服务端nacos-config.txt中service.vgroup_mapping的后缀对应
+  tx-service-group: test_tx_group
+  service:
+    vgroup-mapping:
+      test_tx_group: default
+  registry:
+    type: nacos
+    nacos:
+      server-addr: localhost:8848
+      group: SEATA_GROUP
+
+management:
+  endpoints:
+    web:
+      #配置端点访问前缀
+      base-path: /actuator
+      exposure:
+        #暴露所有端点
+        include: '*'
+
+
